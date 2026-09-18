@@ -1,0 +1,38 @@
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="640dp"
+    android:viewportWidth="360"
+    android:viewportHeight="640">
+
+    <!-- Fundo rosa -->
+    <path
+        android:fillColor="#F4B9D5"
+        android:pathData="M0,0 H360 V640 H0 Z" />
+
+    <!-- Curva roxa superior esquerda -->
+    <path
+        android:fillColor="#927FD7"
+        android:pathData="M0,0 H143 C95,42 81,119 0,133 Z" />
+
+    <!-- Detalhe superior direito -->
+    <path
+        android:fillColor="#F9D1E6"
+        android:pathData="M255,0 H360 V196 C344,136 298,84 255,0 Z" />
+
+    <!-- Curva inferior esquerda -->
+    <path
+        android:fillColor="#DDA0C7"
+        android:pathData="M0,452 C75,478 118,548 141,640 H0 Z" />
+
+    <!-- Curva roxa inferior direita -->
+    <path
+        android:fillColor="#9A80CD"
+        android:pathData="M360,487 V640 H241 C302,601 328,545 360,487 Z" />
+
+    <!-- Detalhe rosa claro -->
+    <path
+        android:fillColor="#F9D7E8"
+        android:pathData="M0,560 C33,568 52,601 73,640 H0 Z" />
+
+</vector>

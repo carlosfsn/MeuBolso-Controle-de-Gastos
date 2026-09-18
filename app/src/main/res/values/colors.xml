@@ -1,0 +1,22 @@
+
+<resources>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Cores do MeuBolso -->
+    <color name="mb_pink">#F4B9D5</color>
+    <color name="mb_light_pink">#FCE2EF</color>
+    <color name="mb_purple">#7160D7</color>
+    <color name="mb_purple_dark">#4B3CA9</color>
+
+    <!-- Textos -->
+    <color name="mb_ink">#2B236D</color>
+    <color name="mb_muted">#756C8D</color>
+    <color name="mb_white">#FFFFFF</color>
+
+    <!-- Movimentacoes financeiras -->
+    <color name="mb_green">#078955</color>
+    <color name="mb_red">#E94960</color>
+
+</resources>

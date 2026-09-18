@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pink_waves">
+
+    <ScrollView
+        android:id="@+id/scrollCategorias"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barraNavegacao"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="26dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/logo_meubolso_icone"
+                    android:contentDescription="Logo MeuBolso" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="9dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MeuBolso"
+                        android:textColor="@color/mb_purple_dark"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="controle de gastos"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Categorias"
+                android:textColor="@color/mb_purple_dark"
+                android:textSize="29sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Organize suas receitas e despesas 💜"
+                android:textColor="@color/mb_muted"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/bg_card_resumo"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp">
+                <TextView
+                    android:id="@+id/tabCategoriasDespesas"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_card_saldo"
+                    android:gravity="center"
+                    android:text="⊖  Despesas"
+                    android:textColor="@color/mb_white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tabCategoriasReceitas"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="⊕  Receitas"
+                    android:textColor="@color/mb_purple_dark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:gravity="center"
+                android:text="Totais de todos os períodos"
+                android:textColor="@color/mb_muted"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/listaCategorias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Barra de navegacao inferior -->
+    <LinearLayout
+        android:id="@+id/barraNavegacao"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:background="@drawable/bg_barra_navegacao"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Navegacao: Inicio -->
+        <LinearLayout
+            android:id="@+id/navInicio"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Icone de casa -->
+            <ImageView
+                android:id="@+id/imgNavInicio"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_inicio"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Início" />
+
+            <!-- Nome da opcao -->
+            <TextView
+                android:id="@+id/txtNavInicio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Início"
+                android:textColor="@color/mb_muted"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Navegacao: Historico -->
+        <LinearLayout
+            android:id="@+id/navHistorico"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Icone de Historico -->
+            <ImageView
+                android:id="@+id/imgNavHistorico"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_historico"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Histórico" />
+
+            <!-- Nome da opcao -->
+            <TextView
+                android:id="@+id/txtNavHistorico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Histórico"
+                android:textColor="@color/mb_muted"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Navegacao: Nova Movimentacao -->
+        <LinearLayout
+            android:id="@+id/navNova"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Icone de adicionar -->
+            <ImageView
+                android:id="@+id/imgNavNova"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_nova"
+                android:tint="@color/mb_purple"
+                android:contentDescription="Nova movimentação" />
+
+            <!-- Nome da opcao -->
+            <TextView
+                android:id="@+id/txtNavNova"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Nova"
+                android:textColor="@color/mb_purple"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Navegacao: Categorias -->
+        <LinearLayout
+            android:id="@+id/navCategorias"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Icone de Categorias -->
+            <ImageView
+                android:id="@+id/imgNavCategorias"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_categorias"
+                android:tint="@color/mb_purple_dark"
+                android:contentDescription="Categorias" />
+
+            <!-- Nome da opcao -->
+            <TextView
+                android:id="@+id/txtNavCategorias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Categorias"
+                android:textColor="@color/mb_purple_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Navegacao: Perfil -->
+        <LinearLayout
+            android:id="@+id/navPerfil"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Icone de Perfil -->
+            <ImageView
+                android:id="@+id/imgNavPerfil"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_perfil"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Perfil" />
+
+            <!-- Nome da opcao -->
+            <TextView
+                android:id="@+id/txtNavPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Perfil"
+                android:textColor="@color/mb_muted"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

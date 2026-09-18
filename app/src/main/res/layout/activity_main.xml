@@ -1,0 +1,207 @@
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pink_waves"
+    tools:context=".MainActivity">
+
+    <!-- Referencia para posicionar o logotipo -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guiaLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.09" />
+
+    <!-- Icone da carteira -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/logo_meubolso_icone"
+        android:contentDescription="Logo MeuBolso"
+        app:layout_constraintTop_toTopOf="@id/guiaLogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Nome do aplicativo -->
+    <TextView
+        android:id="@+id/txtMeuBolso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="MeuBolso"
+        android:textColor="@color/mb_purple_dark"
+        android:textSize="38sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintTop_toBottomOf="@id/imgLogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Subtitulo -->
+    <TextView
+        android:id="@+id/txtSubtitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="controle de gastos"
+        android:textColor="#51434B"
+        android:textSize="19sp"
+        android:letterSpacing="0.02"
+        app:layout_constraintTop_toBottomOf="@id/txtMeuBolso"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- Campo de E-mail -->
+    <EditText
+        android:id="@+id/edtEmail"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/bg_campo_login"
+        android:hint="Digite seu e-mail"
+        android:inputType="textEmailAddress"
+        android:singleLine="true"
+        android:textColor="@color/mb_ink"
+        android:textColorHint="@color/mb_muted"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/txtSubtitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Campo de Senha -->
+    <EditText
+        android:id="@+id/edtSenha"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_campo_login"
+        android:hint="Digite sua senha"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColor="@color/mb_ink"
+        android:textColorHint="@color/mb_muted"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/edtEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botao Entrar -->
+    <Button
+        android:id="@+id/btnEntrar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/white"
+        android:text="Entrar"
+        android:textAllCaps="false"
+        android:textColor="@color/mb_purple_dark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/edtSenha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Esqueci minha senha -->
+    <TextView
+        android:id="@+id/txtEsqueciSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="Esqueci minha senha"
+        android:textColor="@color/mb_purple_dark"
+        android:textSize="16sp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/btnEntrar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botao Criar Conta -->
+    <Button
+        android:id="@+id/btnCriarConta"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="22dp"
+        android:backgroundTint="@color/white"
+        android:text="Criar conta"
+        android:textAllCaps="false"
+        android:textColor="@color/mb_purple_dark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/txtEsqueciSenha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Titulo das opcoes de login social -->
+    <TextView
+        android:id="@+id/txtLogarCom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="Logar com:"
+        android:textColor="@color/mb_purple_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        app:layout_constraintTop_toBottomOf="@id/btnCriarConta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Icones de Login Social -->
+    <LinearLayout
+        android:id="@+id/layoutLoginSocial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/txtLogarCom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Google -->
+        <ImageView
+            android:id="@+id/imgGoogle"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/icone_google_meubolso"
+            android:scaleType="fitCenter"
+            android:contentDescription="Google" />
+
+        <!-- Facebook -->
+        <ImageView
+            android:id="@+id/imgFacebook"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="22dp"
+            android:src="@drawable/icone_facebook_meubolso"
+            android:scaleType="fitCenter"
+            android:contentDescription="Facebook" />
+
+        <!-- Apple -->
+        <ImageView
+            android:id="@+id/imgApple"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="22dp"
+            android:src="@drawable/icone_apple_meubolso"
+            android:scaleType="fitCenter"
+            android:contentDescription="Apple" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

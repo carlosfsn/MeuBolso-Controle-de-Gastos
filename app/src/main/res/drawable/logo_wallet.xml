@@ -1,0 +1,33 @@
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="74dp"
+    android:height="74dp"
+    android:viewportWidth="74"
+    android:viewportHeight="74">
+
+    <!-- Fundo roxo do icone -->
+    <path
+        android:fillColor="#7061D7"
+        android:pathData="M16,0 H58 Q74,0 74,16 V58 Q74,74 58,74 H16 Q0,74 0,58 V16 Q0,0 16,0 Z" />
+
+    <!-- Detalhe rosa da carteira -->
+    <path
+        android:fillColor="#F5BEDC"
+        android:pathData="M18,22 L54,10 L59,23 Z" />
+
+    <!-- Corpo branco da carteira -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,24 H56 Q61,24 61,30 V56 Q61,61 55,61 H17 Q12,61 12,56 V30 Q12,24 16,24 Z" />
+
+    <!-- Fecho roxo da carteira -->
+    <path
+        android:fillColor="#796ADB"
+        android:pathData="M50,34 H68 V50 H50 Q44,50 44,43 Q44,36 50,34 Z" />
+
+    <!-- Detalhe rosa do fecho -->
+    <path
+        android:fillColor="#FFD2E2"
+        android:pathData="M54,40 H59 V45 H54 Z" />
+
+</vector>

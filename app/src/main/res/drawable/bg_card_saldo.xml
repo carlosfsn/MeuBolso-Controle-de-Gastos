@@ -1,0 +1,15 @@
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Degrade roxo -->
+    <gradient
+        android:startColor="#816DD6"
+        android:centerColor="#6F58CC"
+        android:endColor="#5E46B5"
+        android:angle="0" />
+
+    <!-- Cantos arredondados -->
+    <corners android:radius="26dp" />
+
+</shape>

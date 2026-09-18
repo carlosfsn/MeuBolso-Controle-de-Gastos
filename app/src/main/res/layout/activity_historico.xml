@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pink_waves">
+
+    <!-- Conteudo rolavel; a barra de navegacao fica fora do ScrollView. -->
+    <ScrollView
+        android:id="@+id/scrollHistorico"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barraNavegacao"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/conteudoHistorico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="20dp">
+
+            <!-- Logotipo centralizado -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/logo_meubolso_icone"
+                    android:contentDescription="Logotipo MeuBolso" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MeuBolso"
+                        android:textColor="@color/mb_purple_dark"
+                        android:textStyle="bold"
+                        android:textSize="28sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="controle de gastos"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Titulo da tela -->
+            <TextView
+                android:id="@+id/txtTituloHistorico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="Histórico"
+                android:textColor="@color/mb_purple_dark"
+                android:textStyle="bold"
+                android:textSize="30sp" />
+            <TextView
+                android:id="@+id/txtSubtituloHistorico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Acompanhe todas as suas movimentações 💜"
+                android:textColor="@color/mb_muted"
+                android:textSize="14sp" />
+
+            <!-- Filtros visuais: ativaremos os cliques depois. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="3dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/filtroTodos"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_saldo"
+                    android:text="Todos"
+                    android:textColor="@color/mb_white"
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/filtroEntradas"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="↑ Entradas"
+                    android:textColor="@color/mb_purple_dark"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/filtroSaidas"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="↓ Saídas"
+                    android:textColor="@color/mb_purple_dark"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Seletor de mes (visual) -->
+            <LinearLayout
+                android:id="@+id/seletorMes"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card_resumo"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:text="📅"
+                    android:textSize="20sp"
+                    android:textColor="@color/mb_purple_dark"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/txtMesHistorico"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Outubro 2026"
+                    android:textSize="16sp"
+                    android:textColor="@color/mb_purple_dark" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⌄"
+                    android:textSize="24sp"
+                    android:textColor="@color/mb_purple_dark" />
+            </LinearLayout>
+
+            <!-- Resumo do periodo -->
+            <LinearLayout
+                android:id="@+id/cardResumoPeriodo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="14dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Resumo do período"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_purple_dark"
+                        android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/txtVerGrafico"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver gráfico ›"
+                        android:textColor="@color/mb_purple"
+                        android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_card_resumo"
+                            android:backgroundTint="#D9F6EA"
+                            android:text="↑"
+                            android:textColor="@color/mb_green"
+                            android:textSize="25sp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="Receitas"
+                            android:textSize="12sp"
+                            android:textColor="@color/mb_ink" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="R$ 4.500,00"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/mb_green"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                    <View android:layout_width="1dp" android:layout_height="86dp" android:background="#ECE5F0" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_card_resumo"
+                            android:backgroundTint="#FFDFE7"
+                            android:text="↓"
+                            android:textColor="@color/mb_red"
+                            android:textSize="25sp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="Despesas"
+                            android:textSize="12sp"
+                            android:textColor="@color/mb_ink" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="R$ 2.380,00"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/mb_red"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                    <View android:layout_width="1dp" android:layout_height="86dp" android:background="#ECE5F0" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_card_resumo"
+                            android:backgroundTint="#E7DEFF"
+                            android:text="R$"
+                            android:textColor="@color/mb_purple_dark"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="Saldo do período"
+                            android:textSize="12sp"
+                            android:textColor="@color/mb_ink" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="R$ 2.120,00"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/mb_purple_dark"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Cabecalho da lista -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Movimentações"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/mb_purple_dark" />
+                <TextView
+                    android:id="@+id/ordenarHistorico"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mais recentes ⌄"
+                    android:textColor="@color/mb_purple_dark"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Movimentacoes demonstrativas (nao sao dados do banco). -->
+            <!-- Salário -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoSalario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoSalario"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_receitas"
+                    android:gravity="center"
+                    android:text="↑"
+                    android:textColor="@color/mb_green"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Salário"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pagamento mensal"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="31 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ R$ 4.500,00"
+                    android:textColor="@color/mb_green"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Alimentação -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoAlimentacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoAlimentacao"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alimentação"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Almoço no restaurante"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="28 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 85,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Transporte -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoTransporte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoTransporte"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Transporte"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Recarga de cartão de transporte"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="26 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 120,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Mercado -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoMercado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoMercado"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mercado"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Compras do mês"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="23 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 340,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Lazer -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoLazer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoLazer"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lazer"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cinema com amigos"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="18 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 90,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Conta de luz -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoContaLuz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoContaLuz"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Conta de luz"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Fatura de energia"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="12 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 180,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+            <!-- Alimentação -->
+            <LinearLayout
+                android:id="@+id/itemHistoricoAlimentacao2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/bg_card_resumo"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/imgHistoricoAlimentacao2"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_card_despesas"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/mb_red"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alimentação"
+                        android:textStyle="bold"
+                        android:textColor="@color/mb_ink"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Supermercado"
+                        android:textColor="@color/mb_muted"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="05 de out. de 2026"
+                        android:textColor="@color/mb_muted"
+                        android:textSize="11sp" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="- R$ 260,00"
+                    android:textColor="@color/mb_red"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:singleLine="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="›"
+                    android:textColor="@color/mb_muted"
+                    android:textSize="22sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Navegacao fixa no rodape. Historico fica destacado. -->
+    <LinearLayout
+        android:id="@+id/barraNavegacao"
+        android:layout_width="0dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/bg_card_resumo"
+        android:elevation="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout
+            android:id="@+id/navInicio"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgNavInicio"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_inicio"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Home" />
+            <TextView
+                android:id="@+id/txtNavInicio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Home"
+                android:textColor="@color/mb_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navHistorico"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgNavHistorico"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_historico"
+                android:tint="@color/mb_purple_dark"
+                android:contentDescription="Histórico" />
+            <TextView
+                android:id="@+id/txtNavHistorico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Histórico"
+                android:textColor="@color/mb_purple_dark"
+                android:textSize="10sp" android:textStyle="bold" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navNova"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgNavNova"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_nav_nova"
+                android:tint="@color/mb_purple"
+                android:contentDescription="Adicionar" />
+            <TextView
+                android:id="@+id/txtNavNova"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Adicionar"
+                android:textColor="@color/mb_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navCategorias"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgNavCategorias"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_categorias"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Categorias" />
+            <TextView
+                android:id="@+id/txtNavCategorias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Categorias"
+                android:textColor="@color/mb_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navPerfil"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imgNavPerfil"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_nav_perfil"
+                android:tint="@color/mb_muted"
+                android:contentDescription="Perfil" />
+            <TextView
+                android:id="@+id/txtNavPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Perfil"
+                android:textColor="@color/mb_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
