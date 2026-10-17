@@ -99,5 +99,3 @@ Acadêmico de Engenharia de Software, com interesse em desenvolvimento de softwa
 
 **MeuBolso — Organize suas finanças, cuide do seu futuro. 💜**
 ---
-
-**MeuBolso — Organize suas finanças, cuide do seu futuro. 💜
