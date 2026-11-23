@@ -161,46 +161,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Icones de Login Social -->
+
+    <!-- Login com Google -->
     <LinearLayout
         android:id="@+id/layoutLoginSocial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/txtLogarCom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Google -->
         <ImageView
             android:id="@+id/imgGoogle"
-            android:layout_width="56dp"
+            android:layout_width="130dp"
             android:layout_height="56dp"
             android:src="@drawable/icone_google_meubolso"
             android:scaleType="fitCenter"
-            android:contentDescription="Google" />
-
-        <!-- Facebook -->
-        <ImageView
-            android:id="@+id/imgFacebook"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="22dp"
-            android:src="@drawable/icone_facebook_meubolso"
-            android:scaleType="fitCenter"
-            android:contentDescription="Facebook" />
-
-        <!-- Apple -->
-        <ImageView
-            android:id="@+id/imgApple"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="22dp"
-            android:src="@drawable/icone_apple_meubolso"
-            android:scaleType="fitCenter"
-            android:contentDescription="Apple" />
+            android:contentDescription="Entrar com Google" />
 
     </LinearLayout>
 

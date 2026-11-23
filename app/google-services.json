@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1078080122553",
+    "project_id": "meubolso-8f560",
+    "storage_bucket": "meubolso-8f560.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078080122553:android:df2def2f44087164d5f568",
+        "android_client_info": {
+          "package_name": "com.carlosfsn.meubolso"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078080122553-nkrllfrd6irpmoqjbkp39prlrebt2i1g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carlosfsn.meubolso",
+            "certificate_hash": "12d3d6ed8e9b5167b03905511bc627ba4634cf77"
+          }
+        },
+        {
+          "client_id": "1078080122553-7nch42jf5btbosub0kmuptc8up90hkus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKtG7PSI6jP7kp1WRXnDkSL0yg7oWoaWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078080122553-7nch42jf5btbosub0kmuptc8up90hkus.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
