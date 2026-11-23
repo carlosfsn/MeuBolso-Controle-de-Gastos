@@ -10,8 +10,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class NovaMovimentacaoActivity extends AppCompatActivity {
 
+
     private boolean receitaSelecionada = false;
     private String categoriaSelecionada = null;
+
+    // Identifica a movimentação aberta para edição
+    private long idMovimentacaoEdicao = -1L;
 
     private static class CategoriaItem {
         final String nome;
@@ -53,8 +57,38 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar se existe uma sessão ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        // Impedir alterações financeiras sem autenticação
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            NovaMovimentacaoActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_nova_movimentacao);
+
+        // Receber o ID da movimentação selecionada no Histórico
+        idMovimentacaoEdicao = getIntent()
+                .getLongExtra("id_movimentacao", -1L);
 
 // VALIDACAO DOS CAMPOS
 
@@ -228,13 +262,30 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
                     long idMovimentacao;
 
                     try {
-                        idMovimentacao = banco.salvarMovimentacao(
-                                tipo,
-                                valorCentavos,
-                                categoria,
-                                data,
-                                descricao
-                        );
+
+                        if (idMovimentacaoEdicao > 0) {
+
+                            // Atualizar uma movimentação existente
+                            idMovimentacao = banco.atualizarMovimentacao(
+                                    idMovimentacaoEdicao,
+                                    tipo,
+                                    valorCentavos,
+                                    categoria,
+                                    data,
+                                    descricao
+                            );
+
+                        } else {
+
+                            // Cadastrar uma nova movimentação
+                            idMovimentacao = banco.salvarMovimentacao(
+                                    tipo,
+                                    valorCentavos,
+                                    categoria,
+                                    data,
+                                    descricao
+                            );
+                        }
 
                     } catch (Exception erro) {
 
@@ -251,12 +302,15 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
                     }
 
                     // VERIFICAR SE SALVOU CORRETAMENTE
-                    if (idMovimentacao != -1) {
+                    if (idMovimentacaoEdicao > 0
+                            ? idMovimentacao > 0
+                            : idMovimentacao != -1) {
 
                         android.widget.Toast.makeText(
                                 NovaMovimentacaoActivity.this,
-                                "Movimentação salva com sucesso!",
-                                android.widget.Toast.LENGTH_LONG
+                                idMovimentacaoEdicao > 0
+                                        ? "Movimentação atualizada com sucesso!"
+                                        : "Movimentação salva com sucesso!",android.widget.Toast.LENGTH_LONG
                         ).show();
 
                         // Voltar ao Dashboard
@@ -356,6 +410,31 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
         // Comeca em Despesa, aguardando a escolha de uma categoria.
         alterarTipo(false);
 
+        // Carregar os dados quando a tela estiver no modo de edição
+        if (idMovimentacaoEdicao > 0) {
+
+            boolean carregou = carregarMovimentacaoParaEdicao(
+                    calendarioDataMovimentacao
+            );
+
+            if (!carregou) {
+
+                android.widget.Toast.makeText(
+                        this,
+                        "Não foi possível carregar a movimentação.",
+                        android.widget.Toast.LENGTH_LONG
+                ).show();
+
+                finish();
+                return;
+            }
+
+            // Alterar o texto do botão para indicar edição
+            ((android.widget.TextView) findViewById(
+                    R.id.btnSalvarMovimentacao
+            )).setText("Salvar alterações");
+        }
+
         // BOTAO VOLTAR
         findViewById(R.id.btnVoltarMovimentacao)
                 .setOnClickListener(botao -> {
@@ -375,6 +454,116 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
         });
     }
 
+    // Recuperar os dados de uma movimentação existente
+    private boolean carregarMovimentacaoParaEdicao(
+            java.util.Calendar calendario) {
+
+        BancoDadosHelper banco = new BancoDadosHelper(this);
+
+        try (android.database.Cursor cursor =
+                     banco.listarMovimentacoes()) {
+
+            while (cursor.moveToNext()) {
+
+                long id = cursor.getLong(
+                        cursor.getColumnIndexOrThrow("id")
+                );
+
+                if (id != idMovimentacaoEdicao) {
+                    continue;
+                }
+
+                String tipo = cursor.getString(
+                        cursor.getColumnIndexOrThrow("tipo")
+                );
+
+                long valorCentavos = cursor.getLong(
+                        cursor.getColumnIndexOrThrow("valor_centavos")
+                );
+
+                String categoria = cursor.getString(
+                        cursor.getColumnIndexOrThrow("categoria")
+                );
+
+                String data = cursor.getString(
+                        cursor.getColumnIndexOrThrow("data")
+                );
+
+                String descricao = cursor.getString(
+                        cursor.getColumnIndexOrThrow("descricao")
+                );
+
+                // Recuperar o tipo e a categoria
+                boolean receita = "Receita".equalsIgnoreCase(tipo);
+
+                CategoriaItem[] opcoes = receita
+                        ? categoriasReceita
+                        : categoriasDespesa;
+
+                CategoriaItem categoriaEncontrada = null;
+
+                for (CategoriaItem opcao : opcoes) {
+                    if (opcao.nome.equals(categoria)) {
+                        categoriaEncontrada = opcao;
+                        break;
+                    }
+                }
+
+                if (categoriaEncontrada == null) {
+                    return false;
+                }
+
+                // Recuperar a data original
+                java.text.SimpleDateFormat formatoData =
+                        new java.text.SimpleDateFormat(
+                                "dd/MM/yyyy",
+                                new java.util.Locale("pt", "BR")
+                        );
+
+                formatoData.setLenient(false);
+
+                java.util.Date dataOriginal =
+                        formatoData.parse(data);
+
+                if (dataOriginal == null) {
+                    return false;
+                }
+
+                calendario.setTime(dataOriginal);
+
+                // Preencher os campos da tela
+                alterarTipo(receita);
+                selecionarCategoria(categoriaEncontrada);
+
+                ((android.widget.EditText) findViewById(
+                        R.id.edtValorMovimentacao
+                )).setText(String.valueOf(valorCentavos));
+
+                ((android.widget.EditText) findViewById(
+                        R.id.edtDescricaoMovimentacao
+                )).setText(descricao);
+
+                ((android.widget.TextView) findViewById(
+                        R.id.txtDataMovimentacao
+                )).setText(data);
+
+                return true;
+            }
+
+        } catch (Exception erro) {
+
+            android.util.Log.e(
+                    "MeuBolso",
+                    "Erro ao carregar movimentação",
+                    erro
+            );
+
+        } finally {
+            banco.close();
+        }
+
+        return false;
+    }
 
     private CategoriaItem[] obterCategoriasAtuais() {
         return receitaSelecionada ? categoriasReceita : categoriasDespesa;
@@ -507,6 +696,35 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
                 linha.addView(espaco, new android.widget.LinearLayout.LayoutParams(
                         0, dp(1), 1f));
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Verificar se a sessão continua ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            NovaMovimentacaoActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
         }
     }
 

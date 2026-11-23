@@ -37,6 +37,8 @@ public class CategoriasActivity extends AppCompatActivity {
     private LinearLayout listaCategorias;
     private TextView tabDespesas;
     private TextView tabReceitas;
+    private final java.util.Calendar periodoCategorias =
+            java.util.Calendar.getInstance();
 
     private static class RegistroCategoria {
         String tipo;
@@ -63,6 +65,32 @@ public class CategoriasActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar se o usuário possui uma sessão ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        // Impedir acesso às Categorias sem autenticação
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            CategoriasActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_categorias);
 
@@ -75,6 +103,71 @@ public class CategoriasActivity extends AppCompatActivity {
         listaCategorias = findViewById(R.id.listaCategorias);
         tabDespesas = findViewById(R.id.tabCategoriasDespesas);
         tabReceitas = findViewById(R.id.tabCategoriasReceitas);
+
+        // Campo utilizado para selecionar o período
+        TextView txtPeriodoCategorias =
+                findViewById(R.id.txtPeriodoCategorias);
+
+        java.text.SimpleDateFormat formatoPeriodo =
+                new java.text.SimpleDateFormat(
+                        "MMMM 'de' yyyy",
+                        localeBrasil
+                );
+
+        // Mostrar inicialmente o mês atual
+        txtPeriodoCategorias.setText(
+                "Período: " + formatoPeriodo.format(
+                        periodoCategorias.getTime()
+                )
+        );
+
+// Recarregar as movimentações do mês escolhido
+        carregarBanco();
+        escolherTipo(mostrandoReceitas);
+
+        // Abrir o calendário ao tocar no período
+
+        // Selecionar o período e atualizar as categorias
+        txtPeriodoCategorias.setOnClickListener(botao -> {
+
+            new android.app.DatePickerDialog(
+                    CategoriasActivity.this,
+
+                    (seletor, ano, mes, dia) -> {
+
+                        // Guardar o mês e o ano escolhidos
+                        periodoCategorias.set(
+                                java.util.Calendar.YEAR, ano
+                        );
+
+                        periodoCategorias.set(
+                                java.util.Calendar.MONTH, mes
+                        );
+
+                        periodoCategorias.set(
+                                java.util.Calendar.DAY_OF_MONTH, 1
+                        );
+
+                        // Atualizar o texto do período
+                        txtPeriodoCategorias.setText(
+                                "Período: " + formatoPeriodo.format(
+                                        periodoCategorias.getTime()
+                                )
+                        );
+
+                        // Buscar novamente os dados do período
+                        carregarBanco();
+
+                        // Atualizar os valores mostrados na tela
+                        escolherTipo(mostrandoReceitas);
+                    },
+
+                    periodoCategorias.get(java.util.Calendar.YEAR),
+                    periodoCategorias.get(java.util.Calendar.MONTH),
+                    1
+
+            ).show();
+        });
 
         tabDespesas.setOnClickListener(v -> escolherTipo(false));
         tabReceitas.setOnClickListener(v -> escolherTipo(true));
@@ -100,23 +193,119 @@ public class CategoriasActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Verificar se a sessão continua ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            CategoriasActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Atualizar as categorias após validar a sessão
         carregarBanco();
         escolherTipo(mostrandoReceitas);
     }
 
+   // Carregar movimentações do período selecionado
     private void carregarBanco() {
+
         registrosBanco.clear();
+
+        int mesSelecionado = periodoCategorias.get(
+                java.util.Calendar.MONTH
+        );
+
+        int anoSelecionado = periodoCategorias.get(
+                java.util.Calendar.YEAR
+        );
+
+        java.text.SimpleDateFormat formatoData =
+                new java.text.SimpleDateFormat(
+                        "dd/MM/yyyy",
+                        localeBrasil
+                );
+
+        formatoData.setLenient(false);
+
         BancoDadosHelper helper = new BancoDadosHelper(this);
+
         try (Cursor cursor = helper.listarMovimentacoes()) {
+
             while (cursor.moveToNext()) {
-                RegistroCategoria registro = new RegistroCategoria();
-                registro.tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"));
-                registro.categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
-                registro.centavos = cursor.getLong(cursor.getColumnIndexOrThrow("valor_centavos"));
+
+                String dataTexto = cursor.getString(
+                        cursor.getColumnIndexOrThrow("data")
+                );
+
+                // Converter a data cadastrada
+                java.util.Date dataMovimentacao;
+
+                try {
+                    dataMovimentacao = formatoData.parse(dataTexto);
+                } catch (java.text.ParseException erro) {
+                    continue;
+                }
+
+                if (dataMovimentacao == null) {
+                    continue;
+                }
+
+                java.util.Calendar calendario =
+                        java.util.Calendar.getInstance();
+
+                calendario.setTime(dataMovimentacao);
+
+                // Filtrar pelo mês e ano escolhidos
+                if (calendario.get(java.util.Calendar.MONTH)
+                        != mesSelecionado
+                        || calendario.get(java.util.Calendar.YEAR)
+                        != anoSelecionado) {
+                    continue;
+                }
+
+                RegistroCategoria registro =
+                        new RegistroCategoria();
+
+                registro.tipo = cursor.getString(
+                        cursor.getColumnIndexOrThrow("tipo")
+                );
+
+                registro.categoria = cursor.getString(
+                        cursor.getColumnIndexOrThrow("categoria")
+                );
+
+                registro.centavos = cursor.getLong(
+                        cursor.getColumnIndexOrThrow("valor_centavos")
+                );
+
                 registrosBanco.add(registro);
             }
+
         } catch (Exception erro) {
-            Toast.makeText(this, "Não foi possível carregar as categorias.", Toast.LENGTH_LONG).show();
+
+            Toast.makeText(
+                    this,
+                    "Não foi possível carregar as categorias.",
+                    Toast.LENGTH_LONG
+            ).show();
+
         } finally {
             helper.close();
         }
@@ -265,9 +454,9 @@ public class CategoriasActivity extends AppCompatActivity {
 
         cartao.setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle(categoria.nome)
-                .setMessage("Total acumulado: " + formatarMoeda(categoria.centavos) +
+                .setMessage("Total no período: " + formatarMoeda(categoria.centavos) +
                         "\n" + textoQuantidade +
-                        "\n\nValores de todos os períodos cadastrados.")
+                        "\n\nValores do período selecionado.")
                 .setPositiveButton("Fechar", null)
                 .show());
     }

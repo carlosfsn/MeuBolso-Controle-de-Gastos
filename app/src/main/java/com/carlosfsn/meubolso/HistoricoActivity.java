@@ -69,6 +69,32 @@ public class HistoricoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar se o usuário possui uma sessão ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        // Impedir o acesso ao Histórico sem autenticação
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            HistoricoActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_historico);
 
@@ -157,6 +183,32 @@ public class HistoricoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Verificar se a sessão continua ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        if (!autenticado) {
+
+            android.content.Intent intent =
+                    new android.content.Intent(
+                            HistoricoActivity.this,
+                            MainActivity.class
+                    );
+
+            intent.addFlags(
+                    android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                            | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // Atualizar as movimentações após validar a sessão
         carregarMovimentacoesSQLite();
     }
 
@@ -384,13 +436,31 @@ public class HistoricoActivity extends AppCompatActivity {
         );
         parametrosSeta.leftMargin = dp(6);
         cartao.addView(setaDetalhes, parametrosSeta);
-
         cartao.setOnClickListener(botao -> mostrarDetalhes(item));
         return cartao;
     }
 
+    // Formatar valores monetários no padrão brasileiro
+    private String formatarMoeda(long centavos) {
+
+        NumberFormat formato =
+                NumberFormat.getNumberInstance(localeBR);
+
+        formato.setMinimumFractionDigits(2);
+        formato.setMaximumFractionDigits(2);
+
+        BigDecimal decimal =
+                BigDecimal.valueOf(centavos, 2);
+
+        return "R$ " + formato.format(decimal);
+    }
+
+
     private void mostrarDetalhes(Movimentacao item) {
-        String valor = (item.receita() ? "+ " : "- ") + formatarMoeda(item.valorCentavos);
+
+        String valor = (item.receita() ? "+ " : "- ")
+                + formatarMoeda(item.valorCentavos);
+
         new AlertDialog.Builder(this)
                 .setTitle("Detalhes da movimentação")
                 .setMessage("Categoria: " + item.categoria + "\n\n"
@@ -398,18 +468,92 @@ public class HistoricoActivity extends AppCompatActivity {
                         + "Descrição: " + item.descricao + "\n\n"
                         + "Data: " + item.data + "\n\n"
                         + "Valor: " + valor)
-                .setPositiveButton("Fechar", (dialogo, opcao) -> dialogo.dismiss())
+
+                // Abrir a movimentação para edição
+                .setNeutralButton("Editar", (dialogo, opcao) -> {
+
+                    android.content.Intent intent =
+                            new android.content.Intent(
+                                    HistoricoActivity.this,
+                                    NovaMovimentacaoActivity.class
+                            );
+
+                    intent.putExtra("id_movimentacao", item.id);
+
+                    startActivity(intent);
+                })
+
+                // Solicitar confirmação antes de excluir
+                .setNegativeButton("Excluir", (dialogo, opcao) -> {
+
+                    new AlertDialog.Builder(HistoricoActivity.this)
+                            .setTitle("Excluir movimentação?")
+                            .setMessage(
+                                    "Deseja realmente excluir esta movimentação?\n\n"
+                                            + item.descricao + "\n"
+                                            + valor
+                                            + "\n\nEsta ação não poderá ser desfeita."
+                            )
+
+                            .setNegativeButton("Cancelar",
+                                    (confirmacao, escolha) ->
+                                            confirmacao.dismiss())
+
+                            .setPositiveButton("Excluir",
+                                    (confirmacao, escolha) -> {
+
+                                        BancoDadosHelper banco =
+                                                new BancoDadosHelper(
+                                                        HistoricoActivity.this
+                                                );
+
+                                        try {
+
+                                            int excluidos =
+                                                    banco.excluirMovimentacao(item.id);
+
+                                            if (excluidos > 0) {
+
+                                                Toast.makeText(
+                                                        HistoricoActivity.this,
+                                                        "Movimentação excluída com sucesso!",
+                                                        Toast.LENGTH_SHORT
+                                                ).show();
+
+                                                // Recarregar o Histórico
+                                                carregarMovimentacoesSQLite();
+
+                                            } else {
+
+                                                Toast.makeText(
+                                                        HistoricoActivity.this,
+                                                        "Movimentação não encontrada.",
+                                                        Toast.LENGTH_SHORT
+                                                ).show();
+                                            }
+
+                                        } catch (Exception erro) {
+
+                                            Toast.makeText(
+                                                    HistoricoActivity.this,
+                                                    "Erro ao excluir movimentação.",
+                                                    Toast.LENGTH_LONG
+                                            ).show();
+
+                                        } finally {
+                                            banco.close();
+                                        }
+                                    })
+
+                            .show();
+                })
+
+                // Fechar os detalhes
+                .setPositiveButton("Fechar",
+                        (dialogo, opcao) -> dialogo.dismiss())
+
                 .show();
     }
-
-    private String formatarMoeda(long centavos) {
-        NumberFormat formato = NumberFormat.getNumberInstance(localeBR);
-        formato.setMinimumFractionDigits(2);
-        formato.setMaximumFractionDigits(2);
-        BigDecimal decimal = BigDecimal.valueOf(centavos, 2);
-        return "R$ " + formato.format(decimal);
-    }
-
     private int dp(int valor) {
         return Math.round(valor * getResources().getDisplayMetrics().density);
     }

@@ -57,6 +57,31 @@ public class InicioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar se existe uma sessão ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        // Impedir acesso ao Dashboard sem login
+        if (!autenticado) {
+
+            Intent intent = new Intent(
+                    InicioActivity.this,
+                    MainActivity.class
+            );
+
+            intent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_inicio);
 
@@ -99,7 +124,66 @@ public class InicioActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Verificar novamente se a sessão continua ativa
+        boolean autenticado = getSharedPreferences(
+                "meubolso_sessao",
+                MODE_PRIVATE
+        ).getBoolean("autenticado", false);
+
+        if (!autenticado) {
+
+            Intent intent = new Intent(
+                    InicioActivity.this,
+                    MainActivity.class
+            );
+
+            intent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+// Atualizar a saudação com o nome cadastrado
+        atualizarSaudacao();
+
+        // Atualizar os dados quando o usuário voltar ao Dashboard
         carregarDadosDashboard();
+    }
+
+    // Atualizar a saudação com o nome do usuário cadastrado
+    private void atualizarSaudacao() {
+
+        TextView txtSaudacao =
+                findViewById(R.id.txtSaudacao);
+
+        BancoDadosHelper banco =
+                new BancoDadosHelper(this);
+
+        try {
+
+            String nomeCompleto = banco.obterNomeUsuario();
+
+            // Utilizar apenas o primeiro nome na saudação
+            String primeiroNome = nomeCompleto.trim()
+                    .split("\\s+")[0];
+
+            txtSaudacao.setText(
+                    "Olá, " + primeiroNome + "!"
+            );
+
+        } catch (Exception erro) {
+
+            txtSaudacao.setText("Olá!");
+
+        } finally {
+
+            banco.close();
+        }
     }
 
     private void carregarDadosDashboard() {
@@ -178,7 +262,275 @@ public class InicioActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.txtResumoSaldo)).setText(formatarMoeda(saldoMes));
 
         graficoMensal.definirValores(receitasMes, despesasMes);
+        atualizarMetaMensal(despesasMes);
         mostrarUltimasMovimentacoes(movimentacoes);
+    }
+
+    // Exibir o acompanhamento da meta mensal no Dashboard
+    private void atualizarMetaMensal(long despesasMes) {
+
+        long metaMensal = getSharedPreferences(
+                "meubolso_meta_gastos",
+                MODE_PRIVATE
+        ).getLong("meta_mensal_centavos", 0L);
+
+        LinearLayout cardResumo =
+                findViewById(R.id.cardResumoMes);
+
+        TextView textoMeta =
+                cardResumo.findViewWithTag("textoMetaMensal");
+
+        // Criar o texto somente na primeira atualização
+        if (textoMeta == null) {
+
+            textoMeta = new TextView(this);
+            textoMeta.setTag("textoMetaMensal");
+            textoMeta.setTextSize(15);
+            textoMeta.setPadding(0, dp(16), 0, 0);
+
+            cardResumo.addView(textoMeta);
+        }
+
+        // Ocultar as informações quando não existir meta mensal
+        if (metaMensal <= 0) {
+
+            textoMeta.setVisibility(View.GONE);
+
+            // Ocultar a barra de progresso, caso já tenha sido criada
+            View barraExistente =
+                    cardResumo.findViewWithTag("barraProgressoMeta");
+
+            if (barraExistente != null) {
+                barraExistente.setVisibility(View.GONE);
+            }
+
+            // Ocultar a porcentagem utilizada
+            View porcentagemExistente =
+                    cardResumo.findViewWithTag("textoProgressoMeta");
+
+            if (porcentagemExistente != null) {
+                porcentagemExistente.setVisibility(View.GONE);
+            }
+
+            return;
+        }
+
+        textoMeta.setVisibility(View.VISIBLE);
+
+        long diferenca = metaMensal - despesasMes;
+
+        String situacao;
+
+        if (diferenca >= 0) {
+
+            situacao = "Ainda disponível: "
+                    + formatarMoeda(diferenca);
+
+            textoMeta.setTextColor(
+                    getColor(R.color.mb_purple_dark)
+            );
+
+        } else {
+
+            situacao = "Meta ultrapassada em: "
+                    + formatarMoeda(-diferenca);
+
+            textoMeta.setTextColor(
+                    getColor(R.color.mb_red)
+            );
+        }
+
+        textoMeta.setText(
+                "Meta mensal: " + formatarMoeda(metaMensal)
+                        + "\nGastos do mês: "
+                        + formatarMoeda(despesasMes)
+                        + "\n" + situacao
+        );
+
+        // Criar a barra de progresso da meta
+        android.widget.ProgressBar barraMeta =
+                cardResumo.findViewWithTag("barraProgressoMeta");
+
+        if (barraMeta == null) {
+
+            barraMeta = new android.widget.ProgressBar(
+                    this,
+                    null,
+                    android.R.attr.progressBarStyleHorizontal
+            );
+
+            barraMeta.setTag("barraProgressoMeta");
+            barraMeta.setMax(100);
+            barraMeta.setIndeterminate(false);
+
+            LinearLayout.LayoutParams parametrosBarra =
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            dp(12)
+                    );
+
+            parametrosBarra.topMargin = dp(12);
+
+            cardResumo.addView(barraMeta, parametrosBarra);
+        }
+
+        // Criar o texto da porcentagem utilizada
+        TextView textoProgresso =
+                cardResumo.findViewWithTag("textoProgressoMeta");
+
+        if (textoProgresso == null) {
+
+            textoProgresso = new TextView(this);
+            textoProgresso.setTag("textoProgressoMeta");
+            textoProgresso.setTextSize(13);
+            textoProgresso.setPadding(0, dp(6), 0, 0);
+
+            cardResumo.addView(textoProgresso);
+        }
+
+        // Mostrar novamente a barra e a porcentagem quando existir uma meta
+        barraMeta.setVisibility(View.VISIBLE);
+        textoProgresso.setVisibility(View.VISIBLE);
+
+        // Calcular a porcentagem de utilização
+        double porcentagem =
+                (double) despesasMes * 100 / metaMensal;
+
+        int progressoBarra = (int) Math.min(
+                100,
+                Math.max(0, Math.round(porcentagem))
+        );
+
+        barraMeta.setProgress(progressoBarra);
+
+
+        // Definir a cor conforme a porcentagem utilizada
+        int corProgresso;
+
+        if (porcentagem >= 100) {
+
+            // Meta atingida ou ultrapassada
+            corProgresso = getColor(R.color.mb_red);
+
+        } else if (porcentagem >= 80) {
+
+            // Gastos próximos do limite
+            corProgresso = android.graphics.Color.rgb(
+                    230, 156, 53
+            );
+
+        } else {
+
+            // Gastos dentro do limite planejado
+            corProgresso = getColor(R.color.mb_purple);
+        }
+
+        barraMeta.setProgressTintList(
+                android.content.res.ColorStateList.valueOf(
+                        corProgresso
+                )
+        );
+
+        textoProgresso.setTextColor(corProgresso);
+
+        textoProgresso.setText(
+                String.format(
+                        localeBR,
+                        "%.1f%% da meta utilizada",
+                        porcentagem
+                )
+        );
+        // Verificar se é necessário avisar sobre a meta
+        verificarAvisoMetaMensal(despesasMes, metaMensal);
+    }
+
+    // Avisar quando os gastos estiverem próximos ou acima da meta
+    private void verificarAvisoMetaMensal(
+            long despesasMes,
+            long metaMensal) {
+
+        if (metaMensal <= 0) {
+            return;
+        }
+
+        // Consultar a preferência de avisos do usuário
+        boolean avisosAtivos = getSharedPreferences(
+                "meubolso_meta_gastos",
+                MODE_PRIVATE
+        ).getBoolean("avisos_ativos", true);
+
+        // Não apresentar alertas se o usuário os desativou
+        if (!avisosAtivos) {
+            return;
+        }
+
+        java.util.Calendar hoje =
+                java.util.Calendar.getInstance();
+
+        String periodo = hoje.get(java.util.Calendar.YEAR)
+                + "_"
+                + (hoje.get(java.util.Calendar.MONTH) + 1);
+
+        android.content.SharedPreferences preferencias =
+                getSharedPreferences(
+                        "meubolso_meta_gastos",
+                        MODE_PRIVATE
+                );
+
+        double percentual =
+                (double) despesasMes / metaMensal * 100;
+
+        String chaveAviso;
+        String titulo;
+        String mensagem;
+
+        if (percentual >= 100) {
+
+            chaveAviso = "aviso_limite_" + periodo;
+
+            titulo = "Atenção à sua meta!";
+
+            mensagem = "Você atingiu ou ultrapassou sua "
+                    + "meta mensal de gastos.\n\n"
+                    + "Meta: " + formatarMoeda(metaMensal)
+                    + "\nGastos: " + formatarMoeda(despesasMes)
+                    + "\n\nConfira suas despesas para "
+                    + "manter seu planejamento financeiro.";
+
+        } else if (percentual >= 80) {
+
+            chaveAviso = "aviso_80_" + periodo;
+
+            titulo = "Você está próximo da sua meta!";
+
+            mensagem = "Você já utilizou "
+                    + String.format(localeBR, "%.1f", percentual)
+                    + "% da sua meta mensal.\n\n"
+                    + "Meta: " + formatarMoeda(metaMensal)
+                    + "\nGastos: " + formatarMoeda(despesasMes)
+                    + "\nDisponível: "
+                    + formatarMoeda(metaMensal - despesasMes)
+                    + "\n\nAcompanhe seus próximos gastos.";
+
+        } else {
+            return;
+        }
+
+        // Não repetir o mesmo aviso durante o mês
+        if (preferencias.getBoolean(chaveAviso, false)) {
+            return;
+        }
+
+        // Registrar que o aviso já foi apresentado
+        preferencias.edit()
+                .putBoolean(chaveAviso, true)
+                .apply();
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(titulo)
+                .setMessage(mensagem)
+                .setPositiveButton("Entendi", null)
+                .show();
     }
 
     private void mostrarUltimasMovimentacoes(List<Movimentacao> registros) {
