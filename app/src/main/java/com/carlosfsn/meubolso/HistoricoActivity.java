@@ -113,7 +113,6 @@ public class HistoricoActivity extends AppCompatActivity {
         anoEscolhido = hoje.get(java.util.Calendar.YEAR);
         atualizarTextoMes();
 
-        // Os sete exemplos que estavam no XML deixam de aparecer.
         int[] idsExemplos = {
                 R.id.itemHistoricoSalario,
                 R.id.itemHistoricoAlimentacao,
@@ -127,7 +126,6 @@ public class HistoricoActivity extends AppCompatActivity {
             findViewById(id).setVisibility(View.GONE);
         }
 
-        // A lista real ocupa exatamente o lugar dos cartoes antigos.
         LinearLayout conteudo = findViewById(R.id.conteudoHistorico);
         int posicaoLista = conteudo.indexOfChild(findViewById(R.id.itemHistoricoSalario));
         listaMovimentacoes = new LinearLayout(this);
@@ -142,14 +140,14 @@ public class HistoricoActivity extends AppCompatActivity {
         );
 
         findViewById(R.id.navInicio).setOnClickListener(botao -> finish());
-        // ETAPA 89: acesso as categorias pelo Historico.
+        // Acesso as categorias pelo Historico.
         findViewById(R.id.navCategorias).setOnClickListener(botao ->
                 startActivity(new android.content.Intent(HistoricoActivity.this, CategoriasActivity.class))
         );
         findViewById(R.id.navNova).setOnClickListener(botao ->
                 startActivity(new android.content.Intent(HistoricoActivity.this, NovaMovimentacaoActivity.class))
         );
-        // ETAPA 91: abrir Perfil na barra inferior.
+        // Abrir Perfil na barra inferior.
         findViewById(R.id.navPerfil).setOnClickListener(botao ->
                 startActivity(new android.content.Intent(HistoricoActivity.this, PerfilActivity.class))
         );
@@ -310,7 +308,6 @@ public class HistoricoActivity extends AppCompatActivity {
             }
         }
 
-        // Nunca mostrar os totais ficticios do XML.
         View resumo = findViewById(R.id.cardResumoPeriodo);
         resumo.setVisibility(quantidadePeriodo > 0 ? View.VISIBLE : View.GONE);
         if (quantidadePeriodo > 0) atualizarValoresResumo();
@@ -334,8 +331,7 @@ public class HistoricoActivity extends AppCompatActivity {
         }
     }
 
-    // Usa a mesma estrutura do resumo original: receitas, despesas, saldo.
-    private void atualizarValoresResumo() {
+     private void atualizarValoresResumo() {
         LinearLayout resumo = findViewById(R.id.cardResumoPeriodo);
         if (resumo.getChildCount() < 2 || !(resumo.getChildAt(1) instanceof LinearLayout)) {
             resumo.setVisibility(View.GONE);
@@ -558,7 +554,6 @@ public class HistoricoActivity extends AppCompatActivity {
         return Math.round(valor * getResources().getDisplayMetrics().density);
     }
 
-    // Mesmo grafico roxo-escuro com letras brancas, agora com valores reais.
     private void mostrarGraficoPeriodo() {
         long receitas = receitasPeriodoCentavos;
         long despesas = despesasPeriodoCentavos;

@@ -80,7 +80,6 @@
                 android:textColor="@color/mb_muted"
                 android:textSize="14sp" />
 
-            <!-- Filtros visuais: ativaremos os cliques depois. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
@@ -319,8 +318,6 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Movimentacoes demonstrativas (nao sao dados do banco). -->
-            <!-- Salário -->
             <LinearLayout
                 android:id="@+id/itemHistoricoSalario"
                 android:layout_width="match_parent"

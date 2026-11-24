@@ -165,7 +165,7 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
                 findViewById(R.id.edtDescricaoMovimentacao);
 
 
-// ETAPA 84 - SALVAR MOVIMENTACAO NO SQLITE
+// SALVAR MOVIMENTACAO NO SQLITE
 
         findViewById(R.id.btnSalvarMovimentacao)
                 .setOnClickListener(botao -> {
@@ -208,7 +208,6 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Exemplo: "1.234,56" transforma em "123456"
                     String numeros = valorDigitado.replaceAll("[^0-9]", "");
 
                     long valorCentavos;
@@ -654,7 +653,6 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
             linha.addView(cartao, parametros);
 
             if (item.moradia) {
-                // Preserva exatamente o simbolo original de Moradia.
                 android.widget.TextView casa = new android.widget.TextView(this);
                 casa.setText("⌂");
                 casa.setTextSize(25);
@@ -688,7 +686,6 @@ public class NovaMovimentacaoActivity extends AppCompatActivity {
             cartao.setOnClickListener(botao -> selecionarCategoria(item));
         }
 
-        // Completa a ultima linha, mantendo as colunas igualmente largas.
         int faltantes = (4 - opcoes.length % 4) % 4;
         if (linha != null) {
             for (int i = 0; i < faltantes; i++) {

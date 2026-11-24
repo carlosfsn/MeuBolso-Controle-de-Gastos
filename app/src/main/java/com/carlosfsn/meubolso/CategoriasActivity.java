@@ -184,7 +184,7 @@ public class CategoriasActivity extends AppCompatActivity {
         findViewById(R.id.navNova).setOnClickListener(v ->
                 startActivity(new Intent(this, NovaMovimentacaoActivity.class))
         );
-        // ETAPA 91: abrir Perfil na barra inferior.
+        // Abrir Perfil na barra inferior.
         findViewById(R.id.navPerfil).setOnClickListener(v ->
                 startActivity(new Intent(this, PerfilActivity.class))
         );
@@ -411,7 +411,6 @@ public class CategoriasActivity extends AppCompatActivity {
         } else {
             ImageView imagem = new ImageView(this);
             imagem.setImageResource(categoria.icone);
-            // Nao aplicamos tint nos vetores; mantemos o roxo da Etapa 88.
             caixaIcone.addView(imagem, new LinearLayout.LayoutParams(dp(27), dp(27)));
         }
 
